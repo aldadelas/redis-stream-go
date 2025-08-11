@@ -21,7 +21,9 @@ func NewRedisClient(ctx context.Context, addr string) (*RedisClient, error) {
 func (c *RedisClient) CreateStreamGroup(ctx context.Context, streamName string, groupName string) error {
 	groups, err := c.Client.XInfoGroups(ctx, streamName).Result()
 	if err != nil {
-		return err
+		if err.Error() != "ERR no such key" {
+			return err
+		}
 	}
 
 	for _, group := range groups {
